@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="rule_edit"
+        android:summary="dd"
+        android:title="dd">
+    </EditTextPreference>
+    <ListPreference
+        android:key="rule_sim_select"
+        android:summary="22y"
+        android:title="22">
+    </ListPreference>
+</PreferenceScreen>
