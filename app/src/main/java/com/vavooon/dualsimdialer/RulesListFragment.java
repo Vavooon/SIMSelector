@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -38,5 +39,10 @@ public class RulesListFragment extends ListFragment{
         CustomListViewAdapter adapter = new CustomListViewAdapter(getContext(),
                 R.layout.list_layout, rowItems);
         setListAdapter(adapter);
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        // ваш ход господа
     }
 }
