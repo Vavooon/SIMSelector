@@ -2,6 +2,7 @@ package com.vavooon.dualsimdialer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class CustomListViewAdapter extends ArrayAdapter<RowItem> {
             convertView.setTag(holder);
         } else
             holder = (ViewHolder) convertView.getTag();
-
+        convertView.setId(rowItem.getId());
         holder.txtTitle.setText(rowItem.getTitle());
         holder.imageView.setImageResource(rowItem.getImageId());
 

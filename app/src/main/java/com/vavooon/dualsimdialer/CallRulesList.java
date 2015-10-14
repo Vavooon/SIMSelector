@@ -14,7 +14,6 @@ public class CallRulesList extends Application {
     private static CallRulesList singleton = null;
     private Context context;
     SharedPreferences prefs;
-    public int openedRule;
 
     public CallRulesList (Context c) {
         context = c;
@@ -40,8 +39,16 @@ public class CallRulesList extends Application {
         rulesList.add(rule);
     }
 
+    void updateRule(int id, CallRule rule) {
+        rulesList.set(id, rule);
+    }
+
     void removeRule (CallRule rule) {
         rulesList.remove(rule);
+    }
+
+    void removeRule (int index) {
+        rulesList.remove(index);
     }
 
     int size () {
@@ -59,7 +66,7 @@ public class CallRulesList extends Application {
             String[] rules = value.split("\\|");
 
             for (int i = 0; i<rules.length; i++) {
-                Log.e("loadDataRule0", rules[i]);
+                Log.e("loadDataRule"+i, rules[i]);
                 String[] rule = rules[i].split("\\:");
                 int cardId = Integer.parseInt(rule[0]);
                 String ruleString = rule[1];
