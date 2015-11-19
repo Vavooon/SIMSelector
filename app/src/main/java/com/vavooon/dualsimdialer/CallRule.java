@@ -14,4 +14,8 @@ public class CallRule {
         cardId = id;
         ruleString = string;
     }
+
+    public String getRuleString() {
+        return ruleString;
+    }
 }

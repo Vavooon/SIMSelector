@@ -19,36 +19,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.EditText;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class MainActivity extends Activity {
 
+
     private static final String TAG = "list";
     List<PhoneAccountHandle> availablePhoneAccountHandles;
     TextView phoneNumberField;
-    CallRulesList rulesListInstance;
+    public CallRulesList rulesListInstance;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        rulesListInstance = new CallRulesList(this);
+        rulesListInstance = new CallRulesList(getApplication());
+        Common.LAUNCHER_INSTANCE = this;
 
-//        CallRule rule = new CallRule();
-//        rule.cardId = 0;
-//        rule.ruleString = "(380,0)(6,9)3#######";
-//        rulesListInstance.addRule(rule);
-//
-//        rule = new CallRule();
-//        rule.cardId = 1;
-//        rule.ruleString = "(380,0)(67,68,96,97,98)#######";
-//        rulesListInstance.addRule(rule);
-//        rulesListInstance.saveData();
-        //registerForContextMenu(findViewById(R.layout.activity_main));
-
-        //Context.getSystemService(Context.TELECOM_SERVICE).getCallCapablePhoneAccounts();
         phoneNumberField = (EditText)findViewById(R.id.phoneNumberField);
         TelecomManager telecomManager =
                 (TelecomManager) this.getSystemService(Context.TELECOM_SERVICE);
@@ -58,24 +47,25 @@ public class MainActivity extends Activity {
         View.OnClickListener callButtonClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startCall(Uri.parse("tel:" + phoneNumberField.getText()), (PhoneAccountHandle)v.getTag());
+                String uri = phoneNumberField.getText().toString();
+                startCall(Uri.parse("tel:" + uri), rulesListInstance.getPhoneAccountHandleForNumber(uri));
             }
         };
 
-
-        //firstSimButton
 
         LinearLayout callButtonsLayout = (LinearLayout)findViewById(R.id.callButtonsLayout);
 
         for (int i = 0; i < availablePhoneAccountHandles.size(); i++) {
             PhoneAccountHandle phoneAccountHandle = availablePhoneAccountHandles.get(i);
             Log.e(TAG, (String) telecomManager.getPhoneAccount(phoneAccountHandle).getLabel());
-            Button callButton = new Button(this);
-            callButton.setText( (String)telecomManager.getPhoneAccount(phoneAccountHandle).getLabel() );
-            callButton.setTag(phoneAccountHandle);
-            callButton.setOnClickListener( callButtonClick );
-            callButtonsLayout.addView(callButton);
+
         }
+
+
+        Button callButton = new Button(this);
+        callButton.setText( "Call" );
+        callButton.setOnClickListener( callButtonClick );
+        callButtonsLayout.addView(callButton);
 
     }
 
