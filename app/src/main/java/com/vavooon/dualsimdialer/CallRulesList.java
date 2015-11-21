@@ -25,32 +25,22 @@ public class CallRulesList extends Application {
     private static final String TAG = "xposed_debug";
 
     private void generatePatterns() {
+        patternsList.clear();
         for (int i = 0; i<rulesList.size(); i++) {
             String patternString = rulesList.get(i).getRuleString();
-            patternString = patternString.replace("#", ".").replace(",", "|");
+            patternString = patternString.replace("#", ".").replace(",", "|").replace("+", "\\+");
             Pattern p = Pattern.compile(patternString);
             patternsList.add(p);
         }
     }
 
-    public CallRulesList (Context c) {
+    public CallRulesList (Context c, SharedPreferences p) {
         context = c;
         singleton = this;
         Log.e("xposed_debug", "init");
-        if (context != null) {
-            prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        if (p != null) {
+            prefs = p;
         }
-        else {
-            prefs = new XSharedPreferences(MainActivity.class.getPackage().getName());
-        }
-        loadData();
-    }
-
-
-    public CallRulesList (Context c, Context sc) {
-        context = sc;
-        Log.e("xposed_debug", "init");
-        prefs = new XSharedPreferences(MainActivity.class.getPackage().getName(), "settings");
         loadData();
     }
 
@@ -95,27 +85,32 @@ public class CallRulesList extends Application {
         return rulesList.get(index);
     }
 
-    private void loadData () {
-        String value = prefs.getString("rulesList", null);
-
-        Log.e(TAG, "load rulesList setting: "+value);
-        if (value==null ) {
-            //value = "1:(3)(8)0(67,97)#######|0:(38,8)0(63,93)#######";
-            value = "0:(\\+38,38,8)0(63,73,93)#######|1:(\\+38,38,8)0(67,68,96,97,98)#######";
-        }
+    public void loadData (String value) {
         if (value != null) {
             Log.e("loadData", value);
             String[] rules = value.split("\\|");
-
-            for (int i = 0; i<rules.length; i++) {
-                Log.e("loadDataRule"+i, rules[i]);
+            rulesList.clear();
+            for (int i = 0; i < rules.length; i++) {
+                Log.e("loadDataRule" + i, rules[i]);
                 String[] rule = rules[i].split("\\:");
                 int cardId = Integer.parseInt(rule[0]);
                 String ruleString = rule[1];
-                rulesList.add( new CallRule(cardId, ruleString));
+                rulesList.add(new CallRule(cardId, ruleString));
             }
             generatePatterns();
         }
+    }
+
+    private void loadData () {
+        String value;
+        if (prefs != null ) {
+             value = prefs.getString("rulesList", null);
+        }
+        else {
+            value = "0:(\\+38,38,8)0(63,73,93)#######";
+            //value = "0:(\\+38,38,8)0(63,73,93)#######|1:(\\+38,38,8)0(67,68,96,97,98)#######";
+        }
+        loadData(value);
     }
 
     public void saveData () {
@@ -126,7 +121,7 @@ public class CallRulesList extends Application {
             rule = rulesList.get(i);
             encodedRules += "" + rule.cardId + ":" + rule.ruleString + "|";
         }
-        editor.putString("rulesList", encodedRules.replaceFirst(".$",""));
+        editor.putString("rulesList", encodedRules.replaceFirst(".$", ""));
         editor.commit();
     }
 
@@ -135,7 +130,7 @@ public class CallRulesList extends Application {
                 (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
         List<PhoneAccountHandle> availablePhoneAccountHandles = telecomManager.getCallCapablePhoneAccounts();
 
-        Log.e(TAG, "Check all filters("+patternsList.size() + ")");
+        Log.e(TAG, "Check all filters(" + patternsList.size() + ")");
         for (int i = 0; i<patternsList.size(); i++) {
             Matcher matcher = patternsList.get(i).matcher(uri);
             Log.e(TAG, patternsList.get(i).pattern());
