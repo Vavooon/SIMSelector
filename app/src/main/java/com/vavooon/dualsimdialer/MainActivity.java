@@ -24,6 +24,7 @@ import android.widget.EditText;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -33,7 +34,7 @@ public class MainActivity extends Activity {
     List<PhoneAccountHandle> availablePhoneAccountHandles;
     TextView phoneNumberField;
     public CallRulesList rulesListInstance;
-
+    public static FileObserver o;
 
 
     @Override
@@ -48,7 +49,7 @@ public class MainActivity extends Activity {
                 (TelecomManager) this.getSystemService(Context.TELECOM_SERVICE);
         availablePhoneAccountHandles = telecomManager.getCallCapablePhoneAccounts();
 
-
+/*
         FileObserver observer = new FileObserver(Environment.getDataDirectory() + "/data/com.vavooon.dualsimdialer/commands") {
 
             @Override
@@ -57,6 +58,23 @@ public class MainActivity extends Activity {
             }
         };
         observer.startWatching(); //START OBSERVING
+
+*/
+        final File myCommands = new File(Environment.getDataDirectory() + "/data/com.vavooon.dualsimdialer", "commands");
+
+
+        if(!myCommands.exists()) {
+
+            try {
+                myCommands.createNewFile();
+            } catch (IOException e) {
+                Log.d(TAG, e.toString());
+            }
+
+        }
+
+        myCommands.setReadable(true, false);
+        myCommands.setWritable(true, false);
 
         View.OnClickListener callButtonClick = new View.OnClickListener() {
             @Override
@@ -68,17 +86,15 @@ public class MainActivity extends Activity {
                 intent.putExtra("rules", "0:(\\+38,38,8)0(63,73,93)#######|1:(\\+38,38,8)0(67,68,96,97,98)#######");
                 sendBroadcast(intent);
 
-                File myCommands = new File(Environment.getDataDirectory() + "/data/com.vavooon.dualsimdialer", "commands");
-                myCommands.setReadable(true, false);
-                myCommands.setWritable(true, false);
+
 
                 Log.e(TAG, myCommands.getAbsolutePath());
                 try {
                     FileWriter fw = new FileWriter(myCommands);
-                    fw.write("rddded");
+                    fw.write("www"+System.currentTimeMillis());
                     fw.close();
                 } catch(Exception e) {
-                    e.printStackTrace();
+                    Log.d(TAG, e.toString());
                 }
             }
         };

@@ -31,6 +31,8 @@ public class AutorunReceiver extends BroadcastReceiver {
 
 
         Log.e(TAG, "Broadcast receiver runned");
+
+        /*
         File myCommands = new File(Environment.getDataDirectory() + "/data/com.vavooon.dualsimdialer", "commands");
 
 
@@ -39,8 +41,7 @@ public class AutorunReceiver extends BroadcastReceiver {
             try {
                 myCommands.createNewFile();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Log.d(TAG, e.toString());
             }
 
         }
@@ -51,10 +52,11 @@ public class AutorunReceiver extends BroadcastReceiver {
         Log.e(TAG, myCommands.getAbsolutePath());
         try {
             FileWriter fw = new FileWriter(myCommands);
-            fw.write("red");
+            fw.write("red"+System.currentTimeMillis());
             fw.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            Log.d(TAG, e.toString());
         }
+        */
     }
 }
