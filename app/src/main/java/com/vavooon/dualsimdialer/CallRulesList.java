@@ -3,9 +3,14 @@ package com.vavooon.dualsimdialer;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,10 +31,17 @@ public class CallRulesList extends Application {
 
     private void generatePatterns() {
         patternsList.clear();
+        if (rulesList.size()!=0) {
+            Log.d(TAG, "Loaded regexps list:");
+        }
+        else {
+            Log.d(TAG, "No regexps was found");
+        }
         for (int i = 0; i<rulesList.size(); i++) {
             String patternString = rulesList.get(i).getRuleString();
             patternString = patternString.replace("#", ".").replace(",", "|").replace("+", "\\+");
             Pattern p = Pattern.compile(patternString);
+            Log.d(TAG, patternString);
             patternsList.add(p);
         }
     }
@@ -87,11 +99,9 @@ public class CallRulesList extends Application {
 
     public void loadData (String value) {
         if (value != null) {
-            Log.e("loadData", value);
-            String[] rules = value.split("\\|");
+            String[] rules = value.replaceAll("\\r|\\n", "").split("\\|");
             rulesList.clear();
             for (int i = 0; i < rules.length; i++) {
-                Log.e("loadDataRule" + i, rules[i]);
                 String[] rule = rules[i].split("\\:");
                 int cardId = Integer.parseInt(rule[0]);
                 String ruleString = rule[1];
@@ -102,15 +112,10 @@ public class CallRulesList extends Application {
     }
 
     private void loadData () {
-        String value;
         if (prefs != null ) {
-             value = prefs.getString("rulesList", null);
+            String value = prefs.getString("rulesList", null);
+            loadData(value);
         }
-        else {
-            value = "0:(\\+38,38,8)0(63,73,93)#######";
-            //value = "0:(\\+38,38,8)0(63,73,93)#######|1:(\\+38,38,8)0(67,68,96,97,98)#######";
-        }
-        loadData(value);
     }
 
     public void saveData () {
@@ -121,24 +126,55 @@ public class CallRulesList extends Application {
             rule = rulesList.get(i);
             encodedRules += "" + rule.cardId + ":" + rule.ruleString + "|";
         }
-        editor.putString("rulesList", encodedRules.replaceFirst(".$", ""));
+        encodedRules  = encodedRules.replaceFirst(".$", "");
+        editor.putString("rulesList", encodedRules);
         editor.commit();
+        saveDataToFile(encodedRules);
     }
 
     public PhoneAccountHandle getPhoneAccountHandleForNumber(String uri) {
-        TelecomManager telecomManager =
-                (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
+        TelecomManager telecomManager = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
         List<PhoneAccountHandle> availablePhoneAccountHandles = telecomManager.getCallCapablePhoneAccounts();
+        Matcher matcher;
 
-        Log.e(TAG, "Check all filters(" + patternsList.size() + ")");
+        Log.d(TAG, ""+patternsList.size());
         for (int i = 0; i<patternsList.size(); i++) {
-            Matcher matcher = patternsList.get(i).matcher(uri);
-            Log.e(TAG, patternsList.get(i).pattern());
+            matcher = patternsList.get(i).matcher(uri);
+            Log.d(TAG, "Trying pattern: \"" + patternsList.get(i).pattern()+"\"");
             if(matcher.find())
             {
+                Log.d(TAG, "Suitable pattern: " + patternsList.get(i).pattern());
                 return availablePhoneAccountHandles.get(rulesList.get(i).cardId);
             }
         }
+        Log.d(TAG, "No suitable patterns was found");
         return null;
+    }
+
+    private void saveDataToFile(String rules) {
+        File myCommands = new File(Environment.getDataDirectory() + "/data/com.vavooon.dualsimdialer", "commands");
+
+
+        if(!myCommands.exists()) {
+
+            try {
+                myCommands.createNewFile();
+            } catch (IOException e) {
+                Log.d(TAG, e.toString());
+            }
+
+        }
+
+        myCommands.setReadable(true, false);
+        myCommands.setWritable(true, false);
+
+        Log.e(TAG, myCommands.getAbsolutePath());
+        try {
+            FileWriter fw = new FileWriter(myCommands);
+            fw.write(rules);
+            fw.close();
+        } catch(Exception e) {
+            Log.d(TAG, e.toString());
+        }
     }
 }

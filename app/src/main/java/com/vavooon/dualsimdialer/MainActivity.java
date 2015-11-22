@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Environment;
-import android.os.FileObserver;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.telecom.PhoneAccountHandle;
@@ -22,9 +20,6 @@ import android.widget.TextView;
 import android.widget.EditText;
 
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -34,7 +29,6 @@ public class MainActivity extends Activity {
     List<PhoneAccountHandle> availablePhoneAccountHandles;
     TextView phoneNumberField;
     public CallRulesList rulesListInstance;
-    public static FileObserver o;
 
 
     @Override
@@ -60,21 +54,7 @@ public class MainActivity extends Activity {
         observer.startWatching(); //START OBSERVING
 
 */
-        final File myCommands = new File(Environment.getDataDirectory() + "/data/com.vavooon.dualsimdialer", "commands");
 
-
-        if(!myCommands.exists()) {
-
-            try {
-                myCommands.createNewFile();
-            } catch (IOException e) {
-                Log.d(TAG, e.toString());
-            }
-
-        }
-
-        myCommands.setReadable(true, false);
-        myCommands.setWritable(true, false);
 
         View.OnClickListener callButtonClick = new View.OnClickListener() {
             @Override
@@ -88,14 +68,7 @@ public class MainActivity extends Activity {
 
 
 
-                Log.e(TAG, myCommands.getAbsolutePath());
-                try {
-                    FileWriter fw = new FileWriter(myCommands);
-                    fw.write("www"+System.currentTimeMillis());
-                    fw.close();
-                } catch(Exception e) {
-                    Log.d(TAG, e.toString());
-                }
+
             }
         };
 
