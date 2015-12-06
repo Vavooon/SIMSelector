@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
@@ -25,94 +26,76 @@ import java.util.List;
 public class MainActivity extends Activity {
 
 
-    private static final String TAG = "list";
-    List<PhoneAccountHandle> availablePhoneAccountHandles;
-    TextView phoneNumberField;
-    public CallRulesList rulesListInstance;
+	private static final String TAG = "list";
+	List<PhoneAccountHandle> availablePhoneAccountHandles;
+	TextView phoneNumberField;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		phoneNumberField = (EditText) findViewById(R.id.phoneNumberField);
+		TelecomManager telecomManager =
+				(TelecomManager) this.getSystemService(Context.TELECOM_SERVICE);
+		availablePhoneAccountHandles = telecomManager.getCallCapablePhoneAccounts();
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+		View.OnClickListener callButtonClick = new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String URL = "content://com.vavooon.dualsimdialer/rules";
+				Uri friends = Uri.parse(URL);
+				Cursor rulesList = getContentResolver().query(friends, null, null, null, null);
+				Log.d(TAG, rulesList.toString());
+				while (rulesList.moveToNext()) {
+					Log.d(TAG, rulesList.getString(1));
+				}
 
-        rulesListInstance = new CallRulesList(getApplication(), getSharedPreferences("settings", Context.MODE_PRIVATE));
+			}
+		};
 
-        phoneNumberField = (EditText)findViewById(R.id.phoneNumberField);
-        TelecomManager telecomManager =
-                (TelecomManager) this.getSystemService(Context.TELECOM_SERVICE);
-        availablePhoneAccountHandles = telecomManager.getCallCapablePhoneAccounts();
+		LinearLayout callButtonsLayout = (LinearLayout) findViewById(R.id.callButtonsLayout);
 
-/*
-        FileObserver observer = new FileObserver(Environment.getDataDirectory() + "/data/com.vavooon.dualsimdialer/commands") {
+		for (int i = 0; i < availablePhoneAccountHandles.size(); i++) {
+			PhoneAccountHandle phoneAccountHandle = availablePhoneAccountHandles.get(i);
+			Log.e(TAG, (String) telecomManager.getPhoneAccount(phoneAccountHandle).getLabel());
 
-            @Override
-            public void onEvent(int event, String file) {
-                Log.e(TAG, "File event catched in main app");
-            }
-        };
-        observer.startWatching(); //START OBSERVING
-
-*/
+		}
 
 
-        View.OnClickListener callButtonClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //String uri = phoneNumberField.getText().toString();
-                //startCall(Uri.parse("tel:" + uri), rulesListInstance.getPhoneAccountHandleForNumber(uri));
-                Intent intent = new Intent();
-                intent.setAction("com.google.android.dialer.UPDATE_RULES");
-                intent.putExtra("rules", "0:(\\+38,38,8)0(63,73,93)#######|1:(\\+38,38,8)0(67,68,96,97,98)#######");
-                sendBroadcast(intent);
+		Button callButton = new Button(this);
+		callButton.setText("Call");
+		callButton.setOnClickListener(callButtonClick);
+		callButtonsLayout.addView(callButton);
+	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_main, menu);
+		return true;
+	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent i = new Intent(this, PreferencesActivity.class);
+		startActivity(i);
+		return true;
+	}
 
+	void startCall(Uri uri, PhoneAccountHandle phoneAccountHandle) {
+		int permissionCheck = ContextCompat.checkSelfPermission(this,
+				Manifest.permission.CALL_PHONE);
+		if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+			Intent intent = new Intent(Intent.ACTION_CALL, uri);
+			intent.putExtra("android.telecom.extra.PHONE_ACCOUNT_HANDLE", phoneAccountHandle);
+			try {
+				startActivity(intent);
+			} catch (SecurityException e) {
 
-            }
-        };
-
-        LinearLayout callButtonsLayout = (LinearLayout)findViewById(R.id.callButtonsLayout);
-
-        for (int i = 0; i < availablePhoneAccountHandles.size(); i++) {
-            PhoneAccountHandle phoneAccountHandle = availablePhoneAccountHandles.get(i);
-            Log.e(TAG, (String) telecomManager.getPhoneAccount(phoneAccountHandle).getLabel());
-
-        }
-
-
-        Button callButton = new Button(this);
-        callButton.setText( "Call" );
-        callButton.setOnClickListener( callButtonClick );
-        callButtonsLayout.addView(callButton);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu( Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected( MenuItem item) {
-        Intent i = new Intent(this, PreferencesActivity.class);
-        startActivity(i);
-        return true;
-    }
-
-    void startCall(Uri uri, PhoneAccountHandle phoneAccountHandle) {
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CALL_PHONE);
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(Intent.ACTION_CALL, uri);
-            intent.putExtra("android.telecom.extra.PHONE_ACCOUNT_HANDLE", phoneAccountHandle);
-            try {
-                startActivity(intent);
-            } catch (SecurityException e) {
-
-            }
-        }
-    }
+			}
+		}
+	}
 
 
 }

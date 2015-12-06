@@ -20,6 +20,8 @@
         </activity>
         <activity android:name=".PreferencesActivity">
         </activity>
+        <provider android:name=".RulesContentProvider" android:authorities="com.vavooon.dualsimdialer">
+        </provider>
         <meta-data
             android:name="xposedmodule"
             android:value="true" />

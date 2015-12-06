@@ -19,6 +19,7 @@ import java.util.List;
 public class CustomListViewAdapter extends ArrayAdapter<RowItem> {
 
     Context context;
+    RowItem row;
 
     public CustomListViewAdapter(Context context, int resourceId,
                                  List<RowItem> items) {
@@ -44,9 +45,10 @@ public class CustomListViewAdapter extends ArrayAdapter<RowItem> {
             holder.txtTitle = (TextView) convertView.findViewById(R.id.title);
             holder.imageView = (ImageView) convertView.findViewById(R.id.icon);
             convertView.setTag(holder);
-        } else
+        } else {
             holder = (ViewHolder) convertView.getTag();
-        convertView.setId(rowItem.getId());
+        }
+        convertView.setTag(R.string.app_name, rowItem);
         holder.txtTitle.setText(rowItem.getTitle());
         holder.imageView.setImageResource(rowItem.getImageId());
 
