@@ -2,20 +2,15 @@ package com.vavooon.simselector;
 
 import android.app.AndroidAppHelper;
 import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
