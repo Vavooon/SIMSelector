@@ -17,7 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider android:name=".RulesContentProvider" android:authorities="com.vavooon.simselector">
+        <provider android:name=".RulesContentProvider"
+                  android:exported="true"
+                  android:authorities="com.vavooon.simselector">
         </provider>
         <meta-data
             android:name="xposedmodule"
