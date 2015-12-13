@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SIM Selector</string>
+    <string name="add_rule">Add rule</string>
+    <string name="rules">Rules</string>
+</resources>

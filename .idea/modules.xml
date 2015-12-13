@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DualSimDialer.iml" filepath="$PROJECT_DIR$/DualSimDialer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SIM Selector.iml" filepath="$PROJECT_DIR$/SIM Selector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SIM Selector/SIM Selector-SIM Selector.iml" filepath="$PROJECT_DIR$/SIM Selector/SIM Selector-SIM Selector.iml" />
     </modules>
   </component>
 </project>
