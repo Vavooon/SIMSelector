@@ -1,5 +1,5 @@
 # SIMSelector
-Xposed module which automatically selects SIM card when you make new call. Works with all dialers which use standart API.
+Xposed module which automatically selects SIM card using text filters when you make new call. Works with all dialers.
 
 ## Features
 Module uses text filters to determine a right SIM card for outgoing call.
