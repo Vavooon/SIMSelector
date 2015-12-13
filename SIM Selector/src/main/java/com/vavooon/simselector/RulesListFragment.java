@@ -28,7 +28,7 @@ public class RulesListFragment extends ListFragment {
 	CustomListViewAdapter adapter;
 
 
-	private ArrayList<RowItem> createRowItems () {
+	private ArrayList<RowItem> createRowItems() {
 		ArrayList rowItems = new ArrayList<>();
 		ArrayList simNames = new ArrayList<>();
 		ArrayList simIcons = new ArrayList<>();
@@ -49,7 +49,7 @@ public class RulesListFragment extends ListFragment {
 			int id = cursor.getInt(cursor.getColumnIndex(RulesContentProvider.RULE_ID));
 			int simId = cursor.getInt(cursor.getColumnIndex(RulesContentProvider.RULE_SIMID));
 			String ruleString = cursor.getString(cursor.getColumnIndex(RulesContentProvider.RULE_TEXT));
-			RowItem item = new RowItem(id, (Icon)simIcons.get(simId), simId, ruleString, simNames.get(simId).toString());
+			RowItem item = new RowItem(id, (Icon) simIcons.get(simId), simId, ruleString, simNames.get(simId).toString());
 			rowItems.add(item);
 		}
 
@@ -68,8 +68,7 @@ public class RulesListFragment extends ListFragment {
 
 			adapter = new CustomListViewAdapter(getContext(), R.layout.list_layout, rowItems);
 			setListAdapter(adapter);
-		}
-		else {
+		} else {
 			Toast.makeText(getContext(), "Phone permission allows us to access available SIM cards. Please allow in App Settings.", Toast.LENGTH_LONG).show();
 		}
 	}
@@ -97,10 +96,8 @@ public class RulesListFragment extends ListFragment {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 1)
-		{
-			if (resultCode == 1)
-			{
+		if (requestCode == 1) {
+			if (resultCode == 1) {
 				updateList();
 			}
 		}

@@ -5,7 +5,6 @@ package com.vavooon.simselector;
  */
 
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,16 +59,16 @@ public class RulesContentProvider extends ContentProvider {
 
 	// Скрипт создания таблицы
 	static final String DB_CREATE = "create table " + RULE_TABLE + "("
-			+ RULE_ID + " integer primary key autoincrement, "
-			+ RULE_SIMID + " integer, " + RULE_TEXT + " text" + ");";
+		+ RULE_ID + " integer primary key autoincrement, "
+		+ RULE_SIMID + " integer, " + RULE_TEXT + " text" + ");";
 
 	private static final UriMatcher uriMatcher;
+
 	static {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(AUTHORITY, CONTACT_PATH, URI_CONTACTS);
 		uriMatcher.addURI(AUTHORITY, CONTACT_PATH + "/#", URI_CONTACTS_ID);
 	}
-
 
 
 	private ArrayList<Integer> simIdList = new ArrayList<>();
@@ -167,7 +166,7 @@ public class RulesContentProvider extends ContentProvider {
 	}
 
 	public String getType(Uri uri) {
-			return null;
+		return null;
 	}
 
 	@Override
@@ -177,7 +176,7 @@ public class RulesContentProvider extends ContentProvider {
 			bundle.putInt("id", getPhoneAccountId(arg));
 			return bundle;
 		}
-		return(null);
+		return (null);
 	}
 
 
@@ -197,7 +196,8 @@ public class RulesContentProvider extends ContentProvider {
 
 	private void generatePatterns() {
 		simIdList.clear();
-		patternsList.clear();String URL = "content://com.vavooon.simselector/rules";
+		patternsList.clear();
+		String URL = "content://com.vavooon.simselector/rules";
 		Uri uri = Uri.parse(URL);
 		Cursor cursor = query(uri, null, null, null, null);
 		while (cursor.moveToNext()) {
@@ -215,11 +215,10 @@ public class RulesContentProvider extends ContentProvider {
 		Matcher matcher;
 		phoneNumber = phoneNumber.replaceAll("\\s+", "");
 
-		for (int i = 0; i<patternsList.size(); i++) {
+		for (int i = 0; i < patternsList.size(); i++) {
 			matcher = patternsList.get(i).matcher(phoneNumber);
-			Log.d(TAG, "Trying pattern: \"" + patternsList.get(i).pattern()+"\"");
-			if(matcher.find())
-			{
+			Log.d(TAG, "Trying pattern: \"" + patternsList.get(i).pattern() + "\"");
+			if (matcher.find()) {
 				Log.d(TAG, "Suitable pattern: " + patternsList.get(i).pattern());
 				return simIdList.get(i);
 			}

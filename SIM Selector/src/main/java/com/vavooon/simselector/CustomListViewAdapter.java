@@ -57,8 +57,7 @@ public class CustomListViewAdapter extends ArrayAdapter<RowItem> {
 			holder.txtSimName.setText(rowItem.getSimName());
 			holder.txtTitle.setText(rowItem.getTitle());
 			holder.txtAdd.setVisibility(View.INVISIBLE);
-		}
-		else {
+		} else {
 			holder.txtSimName.setVisibility(View.INVISIBLE);
 			holder.txtSimName.setHeight(0);
 			holder.txtTitle.setVisibility(View.INVISIBLE);

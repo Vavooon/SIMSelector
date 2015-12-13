@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class MainActivity extends PreferenceActivity {
 	final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -37,13 +38,13 @@ public class MainActivity extends PreferenceActivity {
 //        target.add(othersOptionsHeader);
 	}
 
-	public static boolean checkPermission(Context c){
-		return (ContextCompat.checkSelfPermission(c, Manifest.permission.CALL_PHONE)== PackageManager.PERMISSION_GRANTED);
+	public static boolean checkPermission(Context c) {
+		return (ContextCompat.checkSelfPermission(c, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED);
 	}
 
-	private void requestPermission(){
+	private void requestPermission() {
 
-		if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)){
+		if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
 
 			//Toast.makeText(context,"GPS permission allows us to access location data. Please allow in App Settings for additional functionality.",Toast.LENGTH_LONG).show();
 
@@ -79,7 +80,7 @@ public class MainActivity extends PreferenceActivity {
 
 	@Override
 	protected boolean isValidFragment(String fragmentName) {
-			return true;
+		return true;
 	}
 
 }

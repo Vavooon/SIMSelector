@@ -47,7 +47,7 @@ public class XposedClass extends Application implements IXposedHookLoadPackage {
 			findAndHookMethod("com.android.server.telecom.components.UserCallIntentProcessor", lpparam.classLoader, "processOutgoingCallIntent", Intent.class, String.class, boolean.class, new XC_MethodHook() {
 				@Override
 				protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-					Intent intent = (Intent)param.args[0];
+					Intent intent = (Intent) param.args[0];
 					Uri handle = intent.getData();
 					String phoneNumber = handle.getSchemeSpecificPart();
 
