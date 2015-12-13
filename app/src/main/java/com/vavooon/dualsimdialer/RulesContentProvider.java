@@ -35,7 +35,7 @@ public class RulesContentProvider extends ContentProvider {
 	static final int DB_VERSION = 1;
 
 	static final String AUTHORITY = "com.vavooon.dualsimdialer";
-	static final String CONTACT_PATH = "/rules";
+	static final String CONTACT_PATH = "rules";
 
 
 	public static final Uri CONTENT_URI = Uri.parse("content://"
@@ -48,10 +48,6 @@ public class RulesContentProvider extends ContentProvider {
 
 	DBHelper dbHelper;
 	SQLiteDatabase db;
-
-	private ArrayList<Pattern> patternsList = new ArrayList<Pattern>();
-
-	// Поля
 
 	static final String RULE_TABLE = "RULES";
 	static final String RULE_ID = "_id";
@@ -81,13 +77,22 @@ public class RulesContentProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection,
 											String[] selectionArgs, String sortOrder) {
 
-
-
+		switch (uriMatcher.match(uri)) {
+			case URI_CONTACTS: // общий Uri
+				break;
+			case URI_CONTACTS_ID: // Uri с ID
+				String id = uri.getLastPathSegment();
+				if (TextUtils.isEmpty(selection)) {
+					selection = RULE_ID + " = " + id;
+				} else {
+					selection = selection + " AND " + RULE_ID + " = " + id;
+				}
+				break;
+			default:
+				throw new IllegalArgumentException("Wrong URI: " + uri);
+		}
 		db = dbHelper.getWritableDatabase();
-		Cursor cursor = db.query(RULE_TABLE, projection, selection,
-			selectionArgs, null, null, sortOrder);
-		// просим ContentResolver уведомлять этот курсор
-		// об изменениях данных в CONTENT_URI
+		Cursor cursor = db.query(RULE_TABLE, projection, selection, selectionArgs, null, null, sortOrder);
 		cursor.setNotificationUri(getContext().getContentResolver(), CONTENT_URI);
 		return cursor;
 	}
@@ -98,7 +103,6 @@ public class RulesContentProvider extends ContentProvider {
 		db = dbHelper.getWritableDatabase();
 		long rowID = db.insert(RULE_TABLE, null, values);
 		Uri resultUri = ContentUris.withAppendedId(CONTENT_URI, rowID);
-		// уведомляем ContentResolver, что данные по адресу resultUri изменились
 		getContext().getContentResolver().notifyChange(resultUri, null);
 		return resultUri;
 	}
@@ -163,12 +167,6 @@ public class RulesContentProvider extends ContentProvider {
 
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(DB_CREATE);
-			/*ContentValues cv = new ContentValues();
-			for (int i = 1; i <= 3; i++) {
-				cv.put(CONTACT_NAME, "name " + i);
-				cv.put(CONTACT_EMAIL, "email " + i);
-				db.insert(CONTACT_TABLE, null, cv);
-			}*/
 		}
 
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

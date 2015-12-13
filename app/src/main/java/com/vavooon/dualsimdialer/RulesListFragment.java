@@ -28,59 +28,41 @@ import java.util.ArrayList;
 public class RulesListFragment extends ListFragment {
 	CustomListViewAdapter adapter;
 
-	static final String PROVIDER_NAME = "com.vavooon.dualsimdialer";
-	static final String URL = "content://" + PROVIDER_NAME + "/rules";
-	static final Uri CONTENT_URI = Uri.parse(URL);
 
-	static final String RULE_ID = "_id";
-	static final String RULE_SIMID = "simid";
-	static final String RULE_TEXT = "text";
+	private ArrayList<RowItem> createRowItems () {
+		ArrayList rowItems = new ArrayList<>();
+
+
+		Cursor cursor = getContext().getContentResolver().query(RulesContentProvider.CONTENT_URI, null, null, null, null);
+
+		while (cursor.moveToNext()) {
+			int id = cursor.getInt(cursor.getColumnIndex(RulesContentProvider.RULE_ID));
+			int simId = cursor.getInt(cursor.getColumnIndex(RulesContentProvider.RULE_SIMID));
+			String ruleString = cursor.getString(cursor.getColumnIndex(RulesContentProvider.RULE_TEXT));
+			RowItem item = new RowItem(id, R.mipmap.ic_menu_add, simId, ruleString);
+			rowItems.add(item);
+		}
+
+
+		RowItem item = new RowItem(-1, R.mipmap.ic_menu_add, -1, "Add");
+		rowItems.add(item);
+
+		return rowItems;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		ArrayList rowItems = createRowItems();
 
-		ArrayList rowItems = new ArrayList<RowItem>();
-
-
-		Cursor cursor = getContext().getContentResolver().query(CONTENT_URI, null, null, null, null);
-		//startManagingCursor(cursor);
-
-		while (cursor.moveToNext()) {
-			int id = cursor.getInt(cursor.getColumnIndex(RULE_ID));
-			int simId = cursor.getInt(cursor.getColumnIndex(RULE_SIMID));
-			String ruleString = cursor.getString(cursor.getColumnIndex(RULE_TEXT));
-			RowItem item = new RowItem(id, R.mipmap.ic_menu_add, simId, ruleString);
-			rowItems.add(item);
-		}
-
-		RowItem item = new RowItem(-1, R.mipmap.ic_menu_add, -1, "Add", true);
-		rowItems.add(item);
-
-		adapter = new CustomListViewAdapter(getContext(),
-			R.layout.list_layout, rowItems);
+		adapter = new CustomListViewAdapter(getContext(), R.layout.list_layout, rowItems);
 		setListAdapter(adapter);
-
 	}
 
 
 	public void updateList() {
-		ArrayList rowItems = new ArrayList<RowItem>();
-
-		Cursor cursor = getContext().getContentResolver().query(CONTENT_URI, null, null, null, null);
-		//startManagingCursor(cursor);
-
-		while (cursor.moveToNext()) {
-			int id = cursor.getInt(cursor.getColumnIndex(RULE_ID));
-			int simId = cursor.getInt(cursor.getColumnIndex(RULE_SIMID));
-			String ruleString = cursor.getString(cursor.getColumnIndex(RULE_TEXT));
-			RowItem item = new RowItem(id, R.mipmap.ic_menu_add, simId, ruleString);
-			rowItems.add(item);
-		}
-
-		RowItem item = new RowItem(-1, R.mipmap.ic_menu_add, -1, "Add", true);
-		rowItems.add(item);
+		ArrayList rowItems = createRowItems();
 		adapter.clear();
 		adapter.addAll(rowItems);
 	}
@@ -95,7 +77,6 @@ public class RulesListFragment extends ListFragment {
 		args.putString("ruleString", row.getRuleString());
 		dFragment.setArguments(args);
 		dFragment.setTargetFragment(this, 1);
-		// Show DialogFragment
 		dFragment.show(getFragmentManager(), "Dialog Fragment");
 	}
 
@@ -125,7 +106,6 @@ public class RulesListFragment extends ListFragment {
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 		RowItem rowItem = (RowItem) getListAdapter().getItem(info.position);
-		Log.e("Con", "" + rowItem.getId());
 		if (rowItem.getId() != -1) {
 			MenuInflater inflater = this.getActivity().getMenuInflater();
 			inflater.inflate(R.menu.rules_context_menu, menu);
@@ -139,14 +119,13 @@ public class RulesListFragment extends ListFragment {
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 
-			case R.id.delete: // <-- your custom menu item id here
-				// do something here
+			case R.id.delete:
 				RowItem rowItem = (RowItem) getListAdapter().getItem(info.position);
 				int id = rowItem.getId();
 				if (id != -1) {
 					Log.e("removeRule", "" + id);
 
-					Uri uri = ContentUris.withAppendedId(CONTENT_URI, id);
+					Uri uri = ContentUris.withAppendedId(RulesContentProvider.CONTENT_URI, id);
 					getContext().getContentResolver().delete(uri, null, null);
 					updateList();
 				}

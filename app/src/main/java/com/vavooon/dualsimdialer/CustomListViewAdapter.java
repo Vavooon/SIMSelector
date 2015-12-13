@@ -18,40 +18,39 @@ import java.util.List;
 
 public class CustomListViewAdapter extends ArrayAdapter<RowItem> {
 
-    Context context;
-    RowItem row;
+	Context context;
 
-    public CustomListViewAdapter(Context context, int resourceId,
-                                 List<RowItem> items) {
-        super(context, resourceId, items);
-        this.context = context;
-    }
+	public CustomListViewAdapter(Context context, int resourceId,
+															 List<RowItem> items) {
+		super(context, resourceId, items);
+		this.context = context;
+	}
 
-    /*private view holder class*/
-    private class ViewHolder {
-        ImageView imageView;
-        TextView txtTitle;
-    }
+	/*private view holder class*/
+	private class ViewHolder {
+		ImageView imageView;
+		TextView txtTitle;
+	}
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
-        RowItem rowItem = getItem(position);
+	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder holder;
+		RowItem rowItem = getItem(position);
 
-        LayoutInflater mInflater = (LayoutInflater) context
-                .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.list_layout, null);
-            holder = new ViewHolder();
-            holder.txtTitle = (TextView) convertView.findViewById(R.id.title);
-            holder.imageView = (ImageView) convertView.findViewById(R.id.icon);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-        convertView.setTag(R.string.app_name, rowItem);
-        holder.txtTitle.setText(rowItem.getTitle());
-        holder.imageView.setImageResource(rowItem.getImageId());
+		LayoutInflater mInflater = (LayoutInflater) context
+			.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		if (convertView == null) {
+			convertView = mInflater.inflate(R.layout.list_layout, null);
+			holder = new ViewHolder();
+			holder.txtTitle = (TextView) convertView.findViewById(R.id.title);
+			holder.imageView = (ImageView) convertView.findViewById(R.id.icon);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		convertView.setTag(R.string.app_name, rowItem);
+		holder.txtTitle.setText(rowItem.getTitle());
+		holder.imageView.setImageResource(rowItem.getImageId());
 
-        return convertView;
-    }
+		return convertView;
+	}
 }

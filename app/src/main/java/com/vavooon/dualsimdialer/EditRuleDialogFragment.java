@@ -31,11 +31,6 @@ import java.util.List;
 public class EditRuleDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
 	List<PhoneAccountHandle> availablePhoneAccountHandles;
 
-	static final String PROVIDER_NAME = "com.vavooon.dualsimdialer";
-	static final String URL = "content://" + PROVIDER_NAME + "/rules";
-	static final Uri CONTENT_URI = Uri.parse(URL);
-	static final String RULE_SIMID = "simid";
-	static final String RULE_TEXT = "text";
 	private static final String TAG = "EditRuleDialog";
 
 	@Override
@@ -55,20 +50,19 @@ public class EditRuleDialogFragment extends DialogFragment implements DialogInte
 				public void onClick(DialogInterface dialog, int id) {
 					EditText e = (EditText) v.findViewById(R.id.editText);
 					Spinner simSelect = (Spinner) v.findViewById(R.id.spinner);
-					//CallRule rule = new CallRule(simSelect.getSelectedItemPosition(), e.getText().toString());
 					int ruleId = args.getInt("id");
 					if (ruleId == -1) {
 
 						ContentValues cv = new ContentValues();
-						cv.put(RULE_SIMID, simSelect.getSelectedItemPosition());
-						cv.put(RULE_TEXT, e.getText().toString());
-						Uri insertUri = getContext().getContentResolver().insert(CONTENT_URI, cv);
+						cv.put(RulesContentProvider.RULE_SIMID, simSelect.getSelectedItemPosition());
+						cv.put(RulesContentProvider.RULE_TEXT, e.getText().toString());
+						Uri insertUri = getContext().getContentResolver().insert(RulesContentProvider.CONTENT_URI, cv);
 						Log.d(TAG, insertUri.toString());
 					} else {
 						ContentValues cv = new ContentValues();
-						cv.put(RULE_SIMID, simSelect.getSelectedItemPosition());
-						cv.put(RULE_TEXT, e.getText().toString());
-						Uri uri = ContentUris.withAppendedId(CONTENT_URI, ruleId);
+						cv.put(RulesContentProvider.RULE_SIMID, simSelect.getSelectedItemPosition());
+						cv.put(RulesContentProvider.RULE_TEXT, e.getText().toString());
+						Uri uri = ContentUris.withAppendedId(RulesContentProvider.CONTENT_URI, ruleId);
 						getContext().getContentResolver().update(uri, cv, null, null);
 					}
 					getTargetFragment().onActivityResult(getTargetRequestCode(), 1, getActivity().getIntent());
@@ -80,7 +74,7 @@ public class EditRuleDialogFragment extends DialogFragment implements DialogInte
 		Spinner simSelect = (Spinner) v.findViewById(R.id.spinner);
 
 
-		List<String> simCards = new ArrayList<String>();
+		List<String> simCards = new ArrayList<>();
 		TelecomManager telecomManager =
 			(TelecomManager) getActivity().getSystemService(Context.TELECOM_SERVICE);
 		availablePhoneAccountHandles = telecomManager.getCallCapablePhoneAccounts();
@@ -90,7 +84,7 @@ public class EditRuleDialogFragment extends DialogFragment implements DialogInte
 		}
 
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, simCards);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, simCards);
 		simSelect.setAdapter(adapter);
 		int id = args.getInt("id");
 		Log.e("ID", "" + id);

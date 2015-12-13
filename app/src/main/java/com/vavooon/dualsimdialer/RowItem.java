@@ -8,7 +8,6 @@ public class RowItem {
     private int imageId;
     private int simId;
     private String title;
-    private boolean isAddButton;
 
     public RowItem(int id, int imageId, int simId, String title) {
         this.id = id;
@@ -17,13 +16,6 @@ public class RowItem {
         this.title = title;
     }
 
-    public RowItem(int id, int imageId, int simId, String title, boolean isAddButton) {
-        this.id = id;
-        this.imageId = imageId;
-        this.simId = simId;
-        this.title = title;
-        this.isAddButton = isAddButton;
-    }
     public int getImageId() {
         return imageId;
     }
